@@ -1,0 +1,108 @@
+Postup .:
+1.databsu create ako v pre worku a uz tam dala aj values do nej a apicture do subory
+
+Fetch the information and printed  in index.php => our mission
+
+2.db_connect.php
+
+a) <?php
+$localhost = "127.0.0.1"; // 
+$username = "root"; // be default the userName for the databases is root
+$password = ""; // by default there is no password in the databases
+$dbname = "crud_example"; // here we need to write the Database name from step 1.
+
+b)create connection
+$connect = mysqli_connect($localhost, $username, $password, $dbname)//
+to this function we insert all the parameters from a).
+
+Connection is now done , but I need to do follow to figure out and see it :
+
+c)connection check
+if (!$connect) {	// this means if connection was not done 
+
+   die("Connection failed: " . mysqli_connect_error()); // I want to kill execution everything what was done and bring the message ,mysqli_connect_error() is a builded error function
+}else {
+
+    echo "Connected successfully";
+
+}
+
+
+
+3.index.php
+I WANT TO FETCH PRODUCTS FROM DATABASE BETTER SAID WHAT I ADDED INTO TABLE LIKE PHONE OR NOTEBOOK AND TO DISPLA IT IN OUR INDEX.PHP :
+
+a) na zaciatku <?php require_once’actions/db_connect.php’ ?> - tu cestu prost k tomu aby sa to spojilo a dolu ides html classic table bla bla bla
+
+b)cize v ramci <?php potrebujeme  our QUERY same like we use to do in mysql , we can do it: 
+$sql = « Select * FROM products»; // cize vyberam vsetko z toho products vsetky produkty a ukladam ich do $sql - TENTO KROK FUNGUJE KVOLI TOMU ZE SOM PRIPOJIL MYSQL V 2.KROKU V db_connect.php a potom v 3.kroku pripojil db_connect.php do index.php
+To RUN it !
+$result = mysqli_query($connect,$sql);
+ 
+mysqli_query() funkcia akceptuje dva parametry a to $connect (z db_connect.php) a QUERY ktora ma byt runned cize u nas to je $sql
+
+
+c) I want to know if we have more than one row to do this we use 
+Builded function mysqli_num_rows
+if(mysqli_num_rows($result)  > 0) 
+// so if it is bigger then 0 I want to loop through them and do something .I need while because it do to one by on and o fetch them all I need function mysqli_fetch_assoc($result)
+
+if(mysqli_num_rows($result)  > 0) 
+{    
+   while($row = mysqli_fetch_array($result)){
+echo $row[«name»] // to je to z  my sql  a teraz ked otvoris index tak to uvidis notebook,phone
+}
+}
+
+Teraz vytvorim  prazdnu stringu $tbody=«»
+
+If there is no connection ,result = 0
+
+else{
+$tbody = «»
+}
+
+And I put into table where I want it <?php echo $tbody ?>. and I copied the stuff from HTML to t body  in else like this :
+
+else{
+$tbody = «fotka v mobile 16.03.2022 10;54» <td cold-an , class=Text >blablablabla
+}
+
+
+d) I also want to concatenated $tbody in If, while cize to bide vo while
+
+$tbody .= "<tr>
+
+            <td><img class='img-thumbnail' src='pictures/" .$row['picture']."'</td> .. pictures v database sa music rovnako volt aka pic v zlozke pozor na spravnu cestu 
+           <td>" .$row['name']."</td>
+           <td>" .$row['price']."</td>
+           <td><a href='update.php?id=" .$row['id']."'><button class='btn btn-primary btn-sm' type='button'>Edit</button></a>
+           <a href='delete.php?id=" .$row['id']."'><button class='btn btn-danger btn-sm' type='button'>Delete</button></a></td>
+
+            </tr>";
+
+
+a dokopy :
+if(mysqli_num_rows($result)  > 0) 
+{    
+   while($row = mysqli_fetch_array($result)){$tbody .= "<tr>
+
+            <td><img class='img-thumbnail' src='pictures/" .$row['picture']."'</td>
+           <td>" .$row['name']."</td>
+           <td>" .$row['price']."</td>
+           <td><a href='update.php?id=" .$row['id']."'><button class='btn btn-primary btn-sm' type='button'>Edit</button></a>
+           <a href='delete.php?id=" .$row['id']."'><button class='btn btn-danger btn-sm' type='button'>Delete</button></a></td>
+
+            </tr>";
+}
+}else{
+$tbody = «fotka v mobile 16.03.2022 10;54» <td cold-an , class=Text >blablablabla
+}
+
+
+// poznamka pozor na src v <td><img class='img-thumbnail' src='pictures/" .$row['picture']."'</td>
+
+Ked chic concatenated picture poodle ID take ho tam mozes dat a dude sa tam davit picture z ID z MYSQL samozrejme 
+
+cize 
+<td><img class='img-thumbnail'  style =«width:100px» .src='pictures/" .$row['picture']."'</td>
